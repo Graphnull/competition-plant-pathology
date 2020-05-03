@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<head>
+
+</head>
+
+<body>
+
+    <script>
+        let run = async () => {
+            let res = await fetch('/list')
+            let update = async (obj) => {
+
+                let res = await fetch('/update',
+                    {
+                        method: 'POST',
+                        body: JSON.stringify(obj)
+                    })
+
+            }
+            let list = await res.json()
+            list.slice(100, 300).forEach(item => {
+                let canvas = document.createElement('canvas')
+                let ctx = canvas.getContext('2d')
+                let img = new Image()
+                img.onload = () => {
+                    canvas.width = img.naturalWidth
+                    canvas.height = img.naturalHeight
+
+                    ctx.drawImage(img, 0, 0)
+                    if(item.startX){
+                        ctx.fillRect(item.startX-5,item.startY-5,10,10)
+                    }
+                    canvas.obj = item
+                    canvas.addEventListener('click', (e) => {
+                        console.log(e.offsetX, e.offsetY);
+                        item.startX=e.offsetX
+                        item.startY=e.offsetY
+                        update(item)
+                    })
+                    document.body.appendChild(canvas)
+                }
+
+                img.src = item.src;
+
+            })
+        }
+        run()
+//         let canvas = document.getElementById('canvas');
+//         
+    </script>
+</body>
+
+</html>
